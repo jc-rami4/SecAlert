@@ -4,6 +4,8 @@ import type { FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/authContext'
+import logo from '../assets/SecAlertLogo.png'
+import './Login.css'
 
 export default function Login() {
   const { session, role, loading } = useAuth()
@@ -27,26 +29,42 @@ export default function Login() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ maxWidth: 320, margin: '80px auto', display: 'grid', gap: 12 }}>
-      <h1>Sign in</h1>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
-      />
-      <button type="submit" disabled={submitting}>
-        {submitting ? 'Signing in...' : 'Sign in'}
-      </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
+    <div className="login-page">
+      <main className="login-panel">
+        <img className="login-logo" src={logo} alt="SecAlert" />
+        <h1 className="login-title">Sign In</h1>
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <input
+            className="login-input"
+            type="email"
+            placeholder="email address"
+            aria-label="Email address"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+          <input
+            className="login-input"
+            type="password"
+            placeholder="password"
+            aria-label="Password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <button className="login-button" type="submit" disabled={submitting}>
+            {submitting ? 'Signing in...' : 'Sign in'}
+          </button>
+          {error && (
+            <p className="login-error" role="alert">
+              {error}
+            </p>
+          )}
+        </form>
+      </main>
+    </div>
   )
 }
