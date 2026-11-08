@@ -54,3 +54,18 @@ export function impactText(ticket: Pick<Ticket, 'impact' | 'impact_other'>): str
   }
   return IMPACT_OPTIONS.find((o) => o.value === ticket.impact)?.label ?? null
 }
+
+export type Submitter = Pick<
+  Profile,
+  'first_name' | 'last_name' | 'email' | 'work_phone' | 'mobile_phone'
+>
+
+export type AdminTicket = Ticket & { submitter: Submitter | null }
+
+// Shows "First Last", or the email if no name is set
+export function personName(
+  p: Pick<Profile, 'first_name' | 'last_name' | 'email'> | null
+): string {
+  if (!p) return 'Unknown user'
+  return [p.first_name, p.last_name].filter(Boolean).join(' ') || p.email
+}
