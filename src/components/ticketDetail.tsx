@@ -5,6 +5,7 @@ import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/authContext'
 import { impactText } from '../types'
 import type { Ticket, TicketResponse } from '../types'
+import TicketBody from './ticketBody'
 
 export default function TicketDetail({
   ticket,
@@ -57,7 +58,7 @@ export default function TicketDetail({
         <strong>Status:</strong> {ticket.status} | <strong>Severity:</strong> {ticket.severity}
         {impactText(ticket) && <> | <strong>Impact:</strong> {impactText(ticket)}</>}
       </p>
-      <p>{ticket.description}</p>
+      <TicketBody ticket={ticket} />
       <small>Created {new Date(ticket.created_at).toLocaleString()}</small>
 
       <h3>Responses</h3>

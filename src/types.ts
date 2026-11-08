@@ -33,6 +33,8 @@ export type Ticket = {
   severity: Severity
   impact: Impact | null
   impact_other: string | null
+  incident_details: string | null
+  mitigation_actions: string | null
   status: Status
   created_at: string
   updated_at: string
