@@ -40,7 +40,7 @@ export default function AddUserForm({ onCreated }: { onCreated: () => void }) {
         setError(error.message)
       }
     } else {
-      setSuccess(`Account created for ${email}.`)
+      setSuccess(`Account created for ${email.trim().toLowerCase()}.`)
       setFirstName('')
       setLastName('')
       setEmail('')
@@ -53,26 +53,75 @@ export default function AddUserForm({ onCreated }: { onCreated: () => void }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 8, maxWidth: 400 }}>
-      <h2>Add a user</h2>
-      <input placeholder="First name" value={firstName} onChange={(e) => setFirstName(e.target.value)} required />
-      <input placeholder="Last name" value={lastName} onChange={(e) => setLastName(e.target.value)} required />
-      <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+    <form className="app-form" onSubmit={handleSubmit}>
       <input
-        type="password"
-        placeholder="Temporary password (8+ characters)"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        minLength={8}
+        className="app-field"
+        placeholder="first name"
+        aria-label="First name"
+        autoComplete="off"
+        value={firstName}
+        onChange={(e) => setFirstName(e.target.value)}
         required
       />
-      <input placeholder="Work phone" value={workPhone} onChange={(e) => setWorkPhone(e.target.value)} />
-      <input placeholder="Mobile phone" value={mobilePhone} onChange={(e) => setMobilePhone(e.target.value)} />
-      <button type="submit" disabled={submitting}>
-        {submitting ? 'Creating...' : 'Create user'}
+      <input
+        className="app-field"
+        placeholder="last name"
+        aria-label="Last name"
+        autoComplete="off"
+        value={lastName}
+        onChange={(e) => setLastName(e.target.value)}
+        required
+      />
+      <input
+        className="app-field"
+        type="email"
+        placeholder="email address"
+        aria-label="Email address"
+        autoComplete="off"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
+      />
+      <input
+        className="app-field"
+        type="password"
+        placeholder="password"
+        aria-label="Password (at least 8 characters)"
+        autoComplete="new-password"
+        minLength={8}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
+      />
+      <input
+        className="app-field"
+        type="tel"
+        placeholder="work phone"
+        aria-label="Work phone"
+        autoComplete="off"
+        value={workPhone}
+        onChange={(e) => setWorkPhone(e.target.value)}
+      />
+      <input
+        className="app-field"
+        type="tel"
+        placeholder="mobile phone"
+        aria-label="Mobile phone"
+        autoComplete="off"
+        value={mobilePhone}
+        onChange={(e) => setMobilePhone(e.target.value)}
+      />
+
+      <button className="app-button app-button--auto" type="submit" disabled={submitting}>
+        {submitting ? 'Adding...' : 'Add user'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>{success}</p>}
+
+      {error && (
+        <p className="app-error" role="alert">
+          {error}
+        </p>
+      )}
+      {success && <p className="app-success">{success}</p>}
     </form>
   )
 }

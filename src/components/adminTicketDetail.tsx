@@ -3,8 +3,9 @@ import { useCallback, useEffect, useState } from 'react'
 import type { FormEvent } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../auth/authContext'
-import { impactText, personName } from '../types'
+import { personName } from '../types'
 import type { AdminTicket, Status, TicketResponse } from '../types'
+import TicketBody from './ticketBody'
 
 export default function AdminTicketDetail({
   ticket,
@@ -80,27 +81,31 @@ export default function AdminTicketDetail({
   }
 
   return (
-    <div style={{ maxWidth: 600 }}>
-      <button onClick={onBack}>← Back to tickets</button>
-      <h2>{ticket.title}</h2>
+    <div className="app-stack">
+      <button type="button" className="app-back" onClick={onBack}>
+        ← Back to tickets
+      </button>
 
-      <p>
-        <strong>Submitted by:</strong> {personName(ticket.submitter)}
-        <br />
-        <small>
-          {ticket.submitter?.email} | Work: {ticket.submitter?.work_phone || 'not set'} | Mobile:{' '}
+      <h2 className="app-section-title app-section-title--tight">{ticket.title}</h2>
+
+      <div className="app-box">
+        <p className="app-box-title">Submitted by</p>
+        <p className="app-box-text">
+          <strong>{personName(ticket.submitter)}</strong>
+        </p>
+        <p className="app-box-text">
+          {ticket.submitter?.email} | work: {ticket.submitter?.work_phone || 'not set'} | mobile:{' '}
           {ticket.submitter?.mobile_phone || 'not set'}
-        </small>
-      </p>
+        </p>
+        <p className="app-box-text app-muted">
+          Created {new Date(ticket.created_at).toLocaleString()}
+        </p>
+      </div>
 
-      <p>
-        <strong>Severity:</strong> {ticket.severity}
-        {impactText(ticket) && <> | <strong>Impact:</strong> {impactText(ticket)}</>}
-      </p>
-
-      <label>
-        <strong>Status: </strong>
+      <label className="app-label">
+        Status
         <select
+          className="app-field app-select"
           value={status}
           disabled={savingStatus}
           onChange={(e) => handleStatusChange(e.target.value as Status)}
@@ -112,32 +117,42 @@ export default function AdminTicketDetail({
         </select>
       </label>
 
-      <p>{ticket.description}</p>
-      <small>Created {new Date(ticket.created_at).toLocaleString()}</small>
+      <TicketBody ticket={ticket} />
 
-      <h3>Responses</h3>
-      {responses.length === 0 && <p>No responses yet.</p>}
+      <h3 className="app-subtitle">Responses</h3>
+      {responses.length === 0 && <p className="app-empty">No responses yet.</p>}
       {responses.map((r) => (
-        <div key={r.id} style={{ border: '1px solid #ccc', padding: 8, marginBottom: 8 }}>
-          <strong>{authorLabel(r.author_id)}</strong>{' '}
-          <small>{new Date(r.created_at).toLocaleString()}</small>
-          <p style={{ margin: '4px 0 0' }}>{r.body}</p>
+        <div
+          key={r.id}
+          className={`app-response${r.author_id !== ticket.created_by ? ' app-response--staff' : ''}`}
+        >
+          <div className="app-response-head">
+            <strong>{authorLabel(r.author_id)}</strong>
+            <small className="app-muted">{new Date(r.created_at).toLocaleString()}</small>
+          </div>
+          <p className="app-box-text">{r.body}</p>
         </div>
       ))}
 
-      <form onSubmit={handleReply} style={{ display: 'grid', gap: 8 }}>
+      <form className="app-form" onSubmit={handleReply}>
         <textarea
-          placeholder="Write a reply"
+          className="app-field app-field-area"
+          placeholder="write a reply"
+          aria-label="Reply"
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          rows={3}
           required
         />
-        <button type="submit" disabled={sending}>
+        <button className="app-button app-button--auto" type="submit" disabled={sending}>
           {sending ? 'Sending...' : 'Send reply'}
         </button>
-        {error && <p style={{ color: 'red' }}>{error}</p>}
       </form>
+
+      {error && (
+        <p className="app-error" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   )
 }

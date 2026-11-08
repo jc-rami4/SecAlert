@@ -2,7 +2,14 @@
 import { impactText } from '../types'
 import type { Ticket } from '../types'
 
-const textStyle = { whiteSpace: 'pre-wrap', margin: '4px 0 16px' } as const
+function TextCard({ title, text }: { title: string; text: string | null }) {
+  return (
+    <div className="app-box">
+      <p className="app-box-title">{title}</p>
+      <p className="app-box-text">{text || 'Not provided'}</p>
+    </div>
+  )
+}
 
 export default function TicketBody({
   ticket,
@@ -12,37 +19,25 @@ export default function TicketBody({
     | 'description'
     | 'incident_details'
     | 'mitigation_actions'
-    | 'severity' 
-    | 'status'
-    | 'title'
+    | 'severity'
     | 'impact'
     | 'impact_other'
   >
 }) {
   return (
-    <div>
-      <p>
-        <strong>{ticket.title}</strong>
-      </p>
+    <div className="app-stack">
+      <div className="app-chips">
+        <span className="app-chip">
+          <strong>Severity:</strong> {ticket.severity}
+        </span>
+        <span className="app-chip">
+          <strong>Impact:</strong> {impactText(ticket) || 'not provided'}
+        </span>
+      </div>
 
-      <p>
-        <strong>Status:</strong> {ticket.status}
-      </p>
-
-      <p>
-        <strong>Severity:</strong> {ticket.severity}
-        <br />
-        <strong>Impact / potential impact:</strong> {impactText(ticket) || 'Not provided'}
-      </p>
-
-      <h3>Summary</h3>
-      <p style={textStyle}>{ticket.description}</p>
-
-      <h3>Incident details</h3>
-      <p style={textStyle}>{ticket.incident_details || 'Not provided'}</p>
-
-      <h3>Actions taken so far</h3>
-      <p style={textStyle}>{ticket.mitigation_actions || 'Not provided'}</p>
+      <TextCard title="Summary" text={ticket.description} />
+      <TextCard title="Incident details" text={ticket.incident_details} />
+      <TextCard title="Actions taken so far" text={ticket.mitigation_actions} />
     </div>
   )
 }

@@ -6,9 +6,10 @@
 
 /* ---------- Shared look: every page uses these two classes ---------- */
 .fence-bg {
+  /* KEEP YOUR OWN WORKING FENCE LINES HERE. These are examples. */
   background-color: #dedede;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='100'%3E%3Cpath d='M-8 -10L88 110M88 -10L-8 110' stroke='%2358534c' stroke-width='6' fill='none'/%3E%3Cpath d='M-8 -10L88 110M88 -10L-8 110' stroke='%23b3aea4' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-size: 80px 100px;
+  background-image: url('../assets/fence.png');
+  background-size: auto;
 }
 
 .fence-panel {
@@ -20,27 +21,20 @@
   box-shadow: 0 0 14px rgba(0, 0, 0, 0.25);
 }
 
-/* ---------- Page frame: fence on the sides, gray panel in the middle ---------- */
+/* ---------- Page frame (no background lines here, they come from .fence-bg) ---------- */
 .app-page {
   height: 100vh;
   height: 100dvh;
   display: flex;
   justify-content: center;
   overflow: hidden;
-  background-color: #dedede;
 }
 
 .app-panel {
-  width: 73%;
-  max-width: 1080px;
-  min-width: min(100%, 440px);
   height: 100%;
   display: flex;
   flex-direction: column;
   background: var(--panel-bg);
-  border-left: 3px solid #a8a8a8;
-  border-right: 3px solid #a8a8a8;
-  box-shadow: 0 0 14px rgba(0, 0, 0, 0.25);
 }
 
 /* ---------- Header: never scrolls ---------- */
@@ -122,6 +116,14 @@
   line-height: 1.2;
 }
 
+.app-section-title--light {
+  font-weight: 400;
+}
+
+.app-section-title--tight {
+  margin: 8px 0 0;
+}
+
 /* ---------- Form fields ---------- */
 .app-form {
   display: grid;
@@ -195,6 +197,12 @@
   cursor: not-allowed;
 }
 
+.app-button--auto {
+  justify-self: center;
+  margin-top: 16px;
+  padding: 0 36px;
+}
+
 .app-error,
 .app-success {
   margin: 0;
@@ -210,7 +218,24 @@
   color: #1b5e20;
 }
 
-/* ---------- Ticket cards ---------- */
+.app-empty {
+  margin: 8px 0;
+  text-align: center;
+}
+
+.app-link-button {
+  display: block;
+  margin: 16px auto 0;
+  padding: 4px;
+  border: none;
+  background: none;
+  color: #000;
+  font-size: 1rem;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* ---------- Cards (ticket lists, user list) ---------- */
 .app-card-list {
   display: grid;
   gap: 10px;
@@ -242,26 +267,160 @@
   outline-offset: 2px;
 }
 
+.app-card--static {
+  cursor: default;
+}
+
+.app-card--static:hover {
+  background: #fff;
+}
+
+.app-card--compact {
+  padding: 16px 12px;
+}
+
 .app-card-title,
 .app-card-meta {
   display: block;
 }
 
-.app-empty {
-  margin: 8px 0;
-  text-align: center;
+/* ---------- Sliding two-button toggle ---------- */
+.app-toggle {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: min(300px, 100%);
+  margin: 16px auto 0;
+  border-radius: 12px;
+  background: #fff;
 }
 
-.app-link-button {
-  display: block;
-  margin: 16px auto 0;
-  padding: 4px;
+.app-toggle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 50%;
+  border-radius: 12px;
+  background: var(--brand-red);
+  transition: transform 0.2s ease;
+}
+
+.app-toggle[data-index='1']::before {
+  transform: translateX(100%);
+}
+
+.app-toggle-option {
+  position: relative;
+  z-index: 1;
+  height: 52px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: #000;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.app-toggle-option[aria-selected='true'] {
+  color: #fff;
+}
+
+.app-toggle-option:focus-visible {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-toggle::before,
+  .app-toggle-option {
+    transition: none;
+  }
+}
+
+/* ---------- Ticket detail screens ---------- */
+.app-stack {
+  display: grid;
+  gap: 12px;
+}
+
+.app-back {
+  justify-self: start;
+  padding: 4px 0;
   border: none;
   background: none;
   color: #000;
   font-size: 1rem;
   text-decoration: underline;
   cursor: pointer;
+}
+
+.app-box {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.app-box-title {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+  font-weight: 600;
+}
+
+.app-box-text {
+  margin: 0;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+.app-muted {
+  color: #555;
+}
+
+.app-label {
+  display: grid;
+  gap: 4px;
+  font-weight: 600;
+}
+
+.app-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.app-chip {
+  padding: 6px 12px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.app-subtitle {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.app-response {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.app-response--staff {
+  border-left: 6px solid var(--brand-red);
+}
+
+.app-response-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 12px;
+  margin-bottom: 4px;
 }
 
 /* ---------- Narrow screens: stack the header ---------- */
