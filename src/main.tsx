@@ -7,7 +7,9 @@ import App from './App'
 import '@fontsource/jost/300.css'
 import '@fontsource/jost/400.css'
 import '@fontsource/jost/500.css'
+import '@fontsource/jost/600.css'
 import './index.css'
+import './styles/app.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

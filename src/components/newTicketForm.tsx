@@ -8,18 +8,24 @@ import type { Impact, Severity } from '../types'
 export default function NewTicketForm({ onCreated }: { onCreated: () => void }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [incidentDetails, setIncidentDetails] = useState('')
-  const [mitigation, setMitigation] = useState('')
-  const [severity, setSeverity] = useState<Severity>('low')
+  const [severity, setSeverity] = useState<Severity | ''>('')
   const [impact, setImpact] = useState<Impact | ''>('')
   const [impactOther, setImpactOther] = useState('')
+  const [incidentDetails, setIncidentDetails] = useState('')
+  const [mitigation, setMitigation] = useState('')
   const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError('')
+    setSuccess('')
 
+    if (!severity) {
+      setError('Please select a severity.')
+      return
+    }
     if (!impact) {
       setError('Please select an impact.')
       return
@@ -34,11 +40,11 @@ export default function NewTicketForm({ onCreated }: { onCreated: () => void }) 
     const { error } = await supabase.from('tickets').insert({
       title,
       description,
-      incident_details: incidentDetails.trim(),
-      mitigation_actions: mitigation.trim(),
       severity,
       impact,
       impact_other: impact === 'other' ? impactOther.trim() : null,
+      incident_details: incidentDetails.trim(),
+      mitigation_actions: mitigation.trim(),
     })
 
     if (error) {
@@ -46,72 +52,63 @@ export default function NewTicketForm({ onCreated }: { onCreated: () => void }) 
     } else {
       setTitle('')
       setDescription('')
-      setIncidentDetails('')
-      setMitigation('')
-      setSeverity('low')
+      setSeverity('')
       setImpact('')
       setImpactOther('')
+      setIncidentDetails('')
+      setMitigation('')
+      setSuccess('Ticket submitted. You can find it under Outstanding Tickets below.')
       onCreated()
     }
     setSubmitting(false)
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 8, maxWidth: 480 }}>
-      <h2>Create a ticket</h2>
-
+    <form className="app-form" onSubmit={handleSubmit}>
       <input
-        placeholder="Title"
+        className="app-field"
+        placeholder="title"
+        aria-label="Title"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         required
       />
 
-      <label>
-        Brief summary of the incident
-        <textarea
-          style={{ width: '100%' }}
-          placeholder="One or two sentences on what happened"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={3}
-          required
-        />
-      </label>
+      <textarea
+        className="app-field app-field-area"
+        placeholder="description"
+        aria-label="Brief description of the incident"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        required
+      />
 
-      <label>
-        Incident details
-        <textarea
-          style={{ width: '100%' }}
-          placeholder="Full explanation: what happened, when, which systems or accounts, who noticed, and anything else relevant"
-          value={incidentDetails}
-          onChange={(e) => setIncidentDetails(e.target.value)}
-          rows={6}
-          required
-        />
-      </label>
-
-      <label>
-        Actions taken so far
-        <textarea
-          style={{ width: '100%' }}
-          placeholder="What have you already done to contain or reduce the problem? Write 'None yet' if nothing."
-          value={mitigation}
-          onChange={(e) => setMitigation(e.target.value)}
-          rows={4}
-          required
-        />
-      </label>
-
-      <select value={severity} onChange={(e) => setSeverity(e.target.value as Severity)}>
+      <select
+        className="app-field app-select"
+        aria-label="Severity"
+        value={severity}
+        onChange={(e) => setSeverity(e.target.value as Severity | '')}
+        required
+      >
+        <option value="" disabled hidden>
+          severity
+        </option>
         <option value="low">Low</option>
         <option value="medium">Medium</option>
         <option value="high">High</option>
         <option value="critical">Critical</option>
       </select>
 
-      <select value={impact} onChange={(e) => setImpact(e.target.value as Impact | '')}>
-        <option value="">Select impact / potential impact</option>
+      <select
+        className="app-field app-select"
+        aria-label="Impact or potential impact"
+        value={impact}
+        onChange={(e) => setImpact(e.target.value as Impact | '')}
+        required
+      >
+        <option value="" disabled hidden>
+          impact
+        </option>
         {IMPACT_OPTIONS.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
@@ -121,16 +118,42 @@ export default function NewTicketForm({ onCreated }: { onCreated: () => void }) 
 
       {impact === 'other' && (
         <input
-          placeholder="Describe the impact"
+          className="app-field"
+          placeholder="describe the impact"
+          aria-label="Describe the impact"
           value={impactOther}
           onChange={(e) => setImpactOther(e.target.value)}
         />
       )}
 
-      <button type="submit" disabled={submitting}>
+      <textarea
+        className="app-field app-field-area"
+        placeholder="incident details"
+        aria-label="Incident details"
+        value={incidentDetails}
+        onChange={(e) => setIncidentDetails(e.target.value)}
+        required
+      />
+
+      <textarea
+        className="app-field app-field-area"
+        placeholder="mitigation efforts"
+        aria-label="Mitigation efforts. Write None if nothing has been done yet."
+        value={mitigation}
+        onChange={(e) => setMitigation(e.target.value)}
+        required
+      />
+
+      <button className="app-button" type="submit" disabled={submitting}>
         {submitting ? 'Submitting...' : 'Submit ticket'}
       </button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+
+      {error && (
+        <p className="app-error" role="alert">
+          {error}
+        </p>
+      )}
+      {success && <p className="app-success">{success}</p>}
     </form>
   )
 }
